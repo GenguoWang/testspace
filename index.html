@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="jquery.js"></script>
+        <script src="test.js?seed=1"></script>
+        <script src="promise.js"></script>
+    </head>
+    <body>
+        hello javascript
+        <button onclick="testThis()">inline</button>
+        <button id="wgg">onclick</button>
+        <script>
+            document.getElementById("wgg").onclick = testThis;
+        </script>
+    </body>
+</html>
