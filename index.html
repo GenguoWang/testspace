@@ -7,10 +7,10 @@
     </head>
     <body>
         hello javascript
-        <button onclick="testThis()">inline</button>
+        <button onclick="console.log(this);console.log((function(){return this;})());">inline</button>
         <button id="wgg">onclick</button>
         <script>
-            document.getElementById("wgg").onclick = testThis;
+            document.getElementById("wgg").onclick = logthis;
         </script>
     </body>
 </html>

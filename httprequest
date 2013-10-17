@@ -1,0 +1,79 @@
+//python
+def httpRequest(apiName,method,reqData):
+    reqData["AccessKeyId"] = gAccessKeyId
+    if gDate != "":
+        reqData["Date"] = gDate
+    else:
+        reqData["Date"] = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
+    signature = generateSignature(apiName,reqData)
+    reqData["Signature"] = signature
+    data = urllib.urlencode(reqData)
+    url = gBaseUrl+apiName
+    if gDebug:
+        print "url: "+url
+        print "data: "+data
+    if method=="post":
+        req = urllib2.Request(url,data)
+    elif method=="get":
+        req = urllib2.Request(url+"?"+data)
+    elif method=="delete":
+        req = urllib2.Request(url,data)
+        req.get_method = lambda: 'DELETE'
+    else:
+        raise ValueError
+    response = urllib2.urlopen(req)#,timeout=15)
+    res = response.read()
+    if gDebug:
+        print res
+    return res
+    
+//php
+function httpRequest($apiName,$method,$reqData)
+{
+    $method = strtolower($method);
+    $reqData["AccessKeyId"] = $this->gAccessKeyId;
+    $reqData["Date"] = gmstrftime("%a, %d %b %Y %H:%M:%S GMT")."\n";
+    $reqData["Signature"] = $this->generateSignature($apiName,$reqData);
+    $data =""; 
+    $flag = true;
+    foreach($reqData as $key=>$value)
+    {
+        $key = urlencode($key);
+        $value = urlencode($value);
+        if($flag) {$data = $data."$key=$value";$flag=false;}
+        else {$data = $data."&$key=$value";}
+    }
+    $url = $this->gBaseUrl.$apiName;
+    if($method=="get")
+    {
+        $req = curl_init();
+        curl_setopt($req, CURLOPT_URL, $url."?".$data);
+        curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+        $res = curl_exec($req);
+        curl_close($req);
+        return $res;
+    }
+    else if($method=="post")
+    {
+        $req = curl_init();
+        curl_setopt($req, CURLOPT_URL, $url);
+        curl_setopt($req, CURLOPT_POST, true);
+        curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($req, CURLOPT_POSTFIELDS, $data);
+        $res = curl_exec($req);
+        curl_close($req);
+        return $res;
+    }
+    else if($method=="delete")
+    {
+        $req = curl_init();
+        curl_setopt($req, CURLOPT_URL, $url);
+        curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($req, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($req, CURLOPT_CUSTOMREQUEST, "DELETE");
+        $res = curl_exec($req);
+        curl_close($req);
+        return $res;
+    }
+    return false;
+}
